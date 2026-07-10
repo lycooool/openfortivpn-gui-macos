@@ -55,6 +55,14 @@ final class VpnManager {
         // this reuses the exact same disconnect path with no special-casing.
         if await processManager.detectOrphan() {
             status = .connected(since: nil)
+            // An orphan-recovered connection has no lifecycleTask reading
+            // its stdout, so it can never see a terminal event on its own —
+            // without starting the health check here too, a real network
+            // drop on this connection would go undetected forever, same as
+            // the bug this health check exists to fix in the first place.
+            if let profile = activeProfile {
+                startHealthCheck(profile: profile)
+            }
         }
     }
 
