@@ -7,15 +7,15 @@ struct SetupWizardView: View {
 
     var body: some View {
         VStack(spacing: 16) {
-            Text("設定 openfortivpn-gui")
+            Text(L("設定 openfortivpn-gui"))
                 .font(.title2)
                 .bold()
-            Text("openfortivpn 需要系統管理員權限才能建立 VPN 通道並設定路由。點下面的按鈕會跳出一次 macOS 的密碼授權框，授權一次之後每次連線都不會再問。")
+            Text(L("openfortivpn 需要系統管理員權限才能建立 VPN 通道並設定路由。點下面的按鈕會跳出一次 macOS 的密碼授權框，授權一次之後每次連線都不會再問。"))
                 .multilineTextAlignment(.center)
                 .foregroundStyle(.secondary)
                 .frame(maxWidth: 420)
 
-            Button(busy ? "等待授權中…" : "Grant Access") {
+            Button(busy ? L("等待授權中…") : L("Grant Access")) {
                 grant()
             }
             .keyboardShortcut(.defaultAction)
@@ -28,7 +28,7 @@ struct SetupWizardView: View {
                         .multilineTextAlignment(.center)
                         .frame(maxWidth: 420)
                         .textSelection(.enabled)
-                    Button("重試") { grant() }
+                    Button(L("重試")) { grant() }
                         .disabled(busy)
                 }
                 .padding(.top, 8)

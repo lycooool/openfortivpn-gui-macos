@@ -1,29 +1,30 @@
 #!/bin/sh
-# Builds the app and runs it as a proper .app bundle via `open`, instead of
-# `swift run`'s raw unbundled executable. Running unbundled skips LaunchServices
-# registration, which breaks SwiftUI TextField keyboard input, copy/paste, and
-# other text-input-system-dependent interactions — this script exists purely to
-# work around that; it has no effect on app data (Keychain/profiles.json paths
-# don't depend on bundling).
+# Builds a release binary, packages it as a real .app bundle (with icon), and
+# installs it to /Applications so it behaves like a normal Mac app afterwards
+# (Launchpad/Spotlight/Dock, double-click to open) instead of needing
+# Scripts/run.sh every time. /Applications is group-writable by `admin` on a
+# stock Mac, so this doesn't need sudo for a normal admin account.
 set -e
 
 cd "$(dirname "$0")/.."
 
 APP_NAME="openfortivpn-gui"
+APP_BUNDLE="/Applications/${APP_NAME}.app"
 
-# `open` on an already-running app just activates it rather than relaunching —
-# kill any existing instance first so this always runs the freshly-built code.
 pkill -x "$APP_NAME" 2>/dev/null || true
 
-swift build
+swift build -c release
 
-BIN_PATH=".build/debug/${APP_NAME}"
-RESOURCE_BUNDLE=".build/debug/${APP_NAME}_${APP_NAME}.bundle"
-APP_BUNDLE=".build/${APP_NAME}.app"
+BIN_PATH=".build/release/${APP_NAME}"
+RESOURCE_BUNDLE=".build/release/${APP_NAME}_${APP_NAME}.bundle"
 
 rm -rf "$APP_BUNDLE"
 mkdir -p "$APP_BUNDLE/Contents/MacOS" "$APP_BUNDLE/Contents/Resources"
 cp "$BIN_PATH" "$APP_BUNDLE/Contents/MacOS/${APP_NAME}"
+cp "Resources/AppIcon/icon.icns" "$APP_BUNDLE/Contents/Resources/icon.icns"
+# Carries the compiled Localizable.strings (en + zh-Hant) that Text()/L(...)
+# calls resolve through Bundle.module at runtime — without this, the app
+# falls back to the untranslated (Chinese) source strings in every locale.
 cp -R "$RESOURCE_BUNDLE" "$APP_BUNDLE/Contents/Resources/"
 
 cat > "$APP_BUNDLE/Contents/Info.plist" <<PLIST
@@ -37,6 +38,10 @@ cat > "$APP_BUNDLE/Contents/Info.plist" <<PLIST
     <string>com.liyancen.openfortivpn-gui</string>
     <key>CFBundleName</key>
     <string>openfortivpn-gui</string>
+    <key>CFBundleIconFile</key>
+    <string>icon.icns</string>
+    <key>CFBundleDevelopmentRegion</key>
+    <string>zh-Hant</string>
     <key>CFBundlePackageType</key>
     <string>APPL</string>
     <key>CFBundleShortVersionString</key>
@@ -51,4 +56,5 @@ cat > "$APP_BUNDLE/Contents/Info.plist" <<PLIST
 </plist>
 PLIST
 
+echo "Installed to $APP_BUNDLE"
 open "$APP_BUNDLE"

@@ -17,10 +17,10 @@ struct ConnectionView: View {
         // content since both Spacers share the shrinkage).
         VStack(spacing: 16) {
             if vpnManager.profileStore.profiles.isEmpty {
-                Text("尚未設定任何連線。")
+                Text(L("尚未設定任何連線。"))
                     .foregroundStyle(.secondary)
             } else {
-                Picker("設定檔", selection: activeProfileBinding) {
+                Picker(L("設定檔"), selection: activeProfileBinding) {
                     ForEach(vpnManager.profileStore.profiles) { profile in
                         Text(profile.name).tag(profile.id)
                     }
@@ -37,7 +37,7 @@ struct ConnectionView: View {
                         Image(systemName: "pencil")
                     }
                     .disabled(currentProfile == nil)
-                    .help("編輯設定檔")
+                    .help(L("編輯設定檔"))
                     .offset(x: 44)
                 }
                 .frame(maxWidth: .infinity, alignment: .center)
@@ -47,13 +47,13 @@ struct ConnectionView: View {
                 Button {
                     editingProfile = .blank(name: newProfileDefaultName())
                 } label: {
-                    Label("新增連線", systemImage: "plus")
+                    Label(L("新增連線"), systemImage: "plus")
                         .frame(maxWidth: .infinity)
                 }
                 Button {
                     showImportSheet = true
                 } label: {
-                    Label("從 FortiClient 匯入", systemImage: "square.and.arrow.down")
+                    Label(L("從 FortiClient 匯入"), systemImage: "square.and.arrow.down")
                         .frame(maxWidth: .infinity)
                 }
             }
@@ -110,7 +110,7 @@ struct ConnectionView: View {
                     Button {
                         copyToClipboard(digest)
                     } label: {
-                        Label(copiedDigest ? "已複製" : "複製指紋", systemImage: copiedDigest ? "checkmark" : "doc.on.doc")
+                        Label(copiedDigest ? L("已複製") : L("複製指紋"), systemImage: copiedDigest ? "checkmark" : "doc.on.doc")
                     }
                     .buttonStyle(.bordered)
                     .controlSize(.small)
@@ -127,7 +127,7 @@ struct ConnectionView: View {
     }
 
     private func newProfileDefaultName() -> String {
-        "設定檔 \(vpnManager.profileStore.profiles.count + 1)"
+        String(format: L("設定檔 %d"), vpnManager.profileStore.profiles.count + 1)
     }
 
     private var activeProfileBinding: Binding<String> {
@@ -143,10 +143,10 @@ struct ConnectionView: View {
     /// becomes impossible to get out of from the UI.
     private var connectButtonLabel: String {
         switch vpnManager.status {
-        case .connected: return "斷線"
-        case .connecting: return "取消連線"
-        case .disconnecting: return "斷線中…"
-        default: return "連線"
+        case .connected: return L("斷線")
+        case .connecting: return L("取消連線")
+        case .disconnecting: return L("斷線中…")
+        default: return L("連線")
         }
     }
 

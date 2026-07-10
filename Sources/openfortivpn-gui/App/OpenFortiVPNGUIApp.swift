@@ -13,7 +13,7 @@ struct OpenFortiVPNGUIApp: App {
         }
         .commands {
             CommandGroup(replacing: .appTermination) {
-                Button("Quit openfortivpn-gui") {
+                Button(L("結束 openfortivpn-gui")) {
                     Task { await vpnManager.quitGracefully() }
                 }
                 .keyboardShortcut("q", modifiers: .command)

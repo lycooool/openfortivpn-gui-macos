@@ -7,9 +7,9 @@ enum ImportError: Error, LocalizedError {
     var errorDescription: String? {
         switch self {
         case .fileNotFound:
-            return "未偵測到 FortiClient。"
+            return L("未偵測到 FortiClient。")
         case .decodeFailed(let message):
-            return "讀取 FortiClient 設定失敗：\(message)"
+            return String(format: L("讀取 FortiClient 設定失敗：%@"), message)
         }
     }
 }

@@ -14,13 +14,13 @@ enum VpnError: Error, Equatable, LocalizedError {
         switch self {
         case .certUntrusted(let digest):
             if digest != nil {
-                return "Gateway 使用尚未信任的憑證。若確認信任，把下面這組指紋貼到設定檔的 Trusted cert 欄位。"
+                return L("Gateway 使用尚未信任的憑證。若確認信任，把下面這組指紋貼到設定檔的 Trusted cert 欄位。")
             }
             return "Gateway certificate is not trusted yet. Check the Trusted cert field in this profile."
         case .authFailure:
             return "Authentication failed. Check your username/password."
         case .noActiveProfile:
-            return "沒有選擇使用中的設定檔。"
+            return L("沒有選擇使用中的設定檔。")
         case .noPasswordSaved:
             return "No password saved in Keychain yet."
         case .incompleteProfile:

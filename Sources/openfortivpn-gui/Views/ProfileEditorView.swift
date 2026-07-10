@@ -20,29 +20,29 @@ struct ProfileEditorView: View {
     var body: some View {
         VStack(spacing: 0) {
             Form {
-                Section("連線資訊") {
-                    TextField("設定檔名稱", text: $profile.name)
+                Section(L("連線資訊")) {
+                    TextField(L("設定檔名稱"), text: $profile.name)
                     TextField("Host", text: $profile.host)
                     TextField("Port", text: portBinding)
                     TextField("Username", text: $profile.username)
-                    SecureField(hasSavedPassword ? "Password（已儲存，留空則不變更）" : "Password", text: $password)
-                    TextField("Trusted cert（選填）", text: optionalBinding(\.trustedCert))
+                    SecureField(hasSavedPassword ? L("Password（已儲存，留空則不變更）") : L("Password"), text: $password)
+                    TextField(L("Trusted cert（選填）"), text: optionalBinding(\.trustedCert))
                 }
 
-                DisclosureGroup("進階選項") {
-                    Toggle("斷線時自動重新連線", isOn: $profile.autoReconnect)
+                DisclosureGroup(L("進階選項")) {
+                    Toggle(L("斷線時自動重新連線"), isOn: $profile.autoReconnect)
                     Toggle("Set routes", isOn: $profile.setRoutes)
                     Toggle("Set DNS", isOn: $profile.setDns)
                     Toggle("Half-internet routes", isOn: $profile.halfInternetRoutes)
                     Toggle("pppd use peer DNS", isOn: $profile.pppdUsePeerdns)
-                    TextField("CA file（選填）", text: optionalBinding(\.caFile))
-                    TextField("User cert（選填）", text: optionalBinding(\.userCert))
-                    TextField("User key（選填）", text: optionalBinding(\.userKey))
+                    TextField(L("CA file（選填）"), text: optionalBinding(\.caFile))
+                    TextField(L("User cert（選填）"), text: optionalBinding(\.userCert))
+                    TextField(L("User key（選填）"), text: optionalBinding(\.userKey))
                 }
 
                 if !isNew {
                     Section {
-                        Button("刪除此設定檔", role: .destructive) {
+                        Button(L("刪除此設定檔"), role: .destructive) {
                             showDeleteConfirm = true
                         }
                     }
@@ -60,9 +60,9 @@ struct ProfileEditorView: View {
 
             HStack {
                 Spacer()
-                Button("取消") { dismiss() }
+                Button(L("取消")) { dismiss() }
                     .keyboardShortcut(.cancelAction)
-                Button("儲存") { save() }
+                Button(L("儲存")) { save() }
                     .keyboardShortcut(.defaultAction)
                     .buttonStyle(.borderedProminent)
             }
@@ -71,12 +71,12 @@ struct ProfileEditorView: View {
         .frame(width: 460, height: 540)
         .onAppear { refreshPasswordState() }
         .confirmationDialog(
-            "確定要刪除「\(profile.name)」嗎？",
+            String(format: L("確定要刪除「%@」嗎？"), profile.name),
             isPresented: $showDeleteConfirm,
             titleVisibility: .visible
         ) {
-            Button("刪除", role: .destructive) { delete() }
-            Button("取消", role: .cancel) {}
+            Button(L("刪除"), role: .destructive) { delete() }
+            Button(L("取消"), role: .cancel) {}
         }
     }
 

@@ -14,23 +14,23 @@ struct MenuBarExtraContentView: View {
         Divider()
 
         if vpnManager.status.isConnected {
-            Button("斷線") {
+            Button(L("斷線")) {
                 Task { await vpnManager.disconnect() }
             }
         } else {
-            Button("連線") {
+            Button(L("連線")) {
                 vpnManager.connect()
             }
             .disabled(vpnManager.status.isBusy || vpnManager.profileStore.profiles.isEmpty)
         }
 
-        Button("開啟視窗") {
+        Button(L("開啟視窗")) {
             openWindow(id: "main")
         }
 
         Divider()
 
-        Button("結束 openfortivpn-gui") {
+        Button(L("結束 openfortivpn-gui")) {
             Task { await vpnManager.quitGracefully() }
         }
     }

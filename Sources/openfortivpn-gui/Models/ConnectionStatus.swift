@@ -21,11 +21,11 @@ enum ConnectionStatus: Equatable {
 
     var label: String {
         switch self {
-        case .disconnected: return "未連線"
-        case .connecting(let message): return message.isEmpty ? "連線中…" : message
-        case .connected: return "已連線"
-        case .disconnecting: return "斷線中…"
-        case .error(let err): return "錯誤：\(err.localizedDescription)"
+        case .disconnected: return L("未連線")
+        case .connecting(let message): return message.isEmpty ? L("連線中…") : message
+        case .connected: return L("已連線")
+        case .disconnecting: return L("斷線中…")
+        case .error(let err): return String(format: L("錯誤：%@"), err.localizedDescription)
         }
     }
 
@@ -41,13 +41,14 @@ enum ConnectionStatus: Equatable {
     /// AppKit auto-templates (forces monochrome) NSImage-based menu-bar status
     /// items regardless of SwiftUI-level color hints, so the tray icon
     /// differentiates status by shape instead of color — the native macOS
-    /// convention for menu-bar items anyway.
+    /// convention for menu-bar items anyway. Shield-family symbols echo the
+    /// app icon (lock.shield.fill) so the tray reads as "this app" at a glance.
     var menuBarSymbolName: String {
         switch self {
-        case .disconnected: return "circle"
-        case .connecting, .disconnecting: return "circle.dotted"
-        case .connected: return "checkmark.circle.fill"
-        case .error: return "exclamationmark.circle.fill"
+        case .disconnected: return "xmark.shield"
+        case .connecting, .disconnecting: return "shield.lefthalf.filled"
+        case .connected: return "checkmark.shield.fill"
+        case .error: return "exclamationmark.shield.fill"
         }
     }
 }

@@ -10,14 +10,14 @@ struct ImportFromFortiClientView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("從 FortiClient 匯入")
+            Text(L("從 FortiClient 匯入"))
                 .font(.headline)
 
             if let errorMessage {
                 Text(errorMessage)
                     .foregroundStyle(.secondary)
             } else if profiles.isEmpty {
-                Text("沒有找到設定檔。")
+                Text(L("沒有找到設定檔。"))
                     .foregroundStyle(.secondary)
             } else {
                 List(profiles.indices, id: \.self) { index in
@@ -26,7 +26,7 @@ struct ImportFromFortiClientView: View {
                         onImport(profile)
                     } label: {
                         VStack(alignment: .leading) {
-                            Text(profile.name ?? "未命名")
+                            Text(profile.name ?? L("未命名"))
                             Text("\(profile.server ?? "")\(profile.serverPort.map { ":\($0)" } ?? "")｜\(profile.user ?? "")")
                                 .font(.caption)
                                 .foregroundStyle(.secondary)
@@ -38,7 +38,7 @@ struct ImportFromFortiClientView: View {
 
             HStack {
                 Spacer()
-                Button("關閉") { dismiss() }
+                Button(L("關閉")) { dismiss() }
             }
         }
         .padding(20)
