@@ -9,6 +9,7 @@ struct ProfileEditorView: View {
     @State private var hasSavedPassword = false
     @State private var errorMessage: String?
     @State private var showDeleteConfirm = false
+    @State private var advancedExpanded = false
 
     private let isNew: Bool
 
@@ -29,7 +30,12 @@ struct ProfileEditorView: View {
                     TextField(L("Trusted cert（選填）"), text: optionalBinding(\.trustedCert))
                 }
 
-                DisclosureGroup(L("進階選項")) {
+                // Plain `DisclosureGroup(_ titleKey:)` only makes the small
+                // chevron glyph itself respond to clicks on macOS (unlike
+                // iOS, where the whole row toggles) — an explicit binding +
+                // a tappable label works around that so clicking the text
+                // "進階選項" also expands/collapses it.
+                DisclosureGroup(isExpanded: $advancedExpanded) {
                     Toggle(L("斷線時自動重新連線"), isOn: $profile.autoReconnect)
                     Toggle("Set routes", isOn: $profile.setRoutes)
                     Toggle("Set DNS", isOn: $profile.setDns)
@@ -38,6 +44,10 @@ struct ProfileEditorView: View {
                     TextField(L("CA file（選填）"), text: optionalBinding(\.caFile))
                     TextField(L("User cert（選填）"), text: optionalBinding(\.userCert))
                     TextField(L("User key（選填）"), text: optionalBinding(\.userKey))
+                } label: {
+                    Text(L("進階選項"))
+                        .contentShape(Rectangle())
+                        .onTapGesture { advancedExpanded.toggle() }
                 }
 
                 if !isNew {
