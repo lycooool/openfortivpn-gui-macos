@@ -63,7 +63,6 @@ struct ConnectionView: View {
             Button(connectButtonLabel) {
                 toggle()
             }
-            .keyboardShortcut(.defaultAction)
             .disabled(connectButtonDisabled)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
