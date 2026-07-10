@@ -20,51 +20,72 @@ struct ProfileEditorView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            Form {
-                Section(L("連線資訊")) {
-                    TextField(L("設定檔名稱"), text: $profile.name)
-                    TextField("Host", text: $profile.host)
-                    TextField("Port", text: portBinding)
-                    TextField("Username", text: $profile.username)
-                    SecureField(hasSavedPassword ? L("Password（已儲存，留空則不變更）") : L("Password"), text: $password)
-                    TextField(L("Trusted cert（選填）"), text: optionalBinding(\.trustedCert))
-                }
+            ScrollView {
+                VStack(alignment: .leading, spacing: 20) {
+                    sectionBox {
+                        Grid(alignment: .leading, horizontalSpacing: 16, verticalSpacing: 14) {
+                            gridRow(L("設定檔名稱")) { TextField("", text: $profile.name) }
+                            gridRow("Host") { TextField("", text: $profile.host) }
+                            gridRow("Port") { TextField("", text: portBinding) }
+                            gridRow("Username") { TextField("", text: $profile.username) }
+                            gridRow(L("Password")) {
+                                VStack(alignment: .leading, spacing: 4) {
+                                    SecureField("", text: $password)
+                                        .textFieldStyle(.roundedBorder)
+                                    if hasSavedPassword {
+                                        Text(L("已儲存，留空則不變更"))
+                                            .font(.caption)
+                                            .foregroundStyle(.secondary)
+                                    }
+                                }
+                            }
+                            gridRow(L("Trusted cert（選填）")) { TextField("", text: optionalBinding(\.trustedCert)) }
 
-                // Plain `DisclosureGroup(_ titleKey:)` only makes the small
-                // chevron glyph itself respond to clicks on macOS (unlike
-                // iOS, where the whole row toggles) — an explicit binding +
-                // a tappable label works around that so clicking the text
-                // "進階選項" also expands/collapses it.
-                DisclosureGroup(isExpanded: $advancedExpanded) {
-                    Toggle(L("斷線時自動重新連線"), isOn: $profile.autoReconnect)
-                    Toggle("Set routes", isOn: $profile.setRoutes)
-                    Toggle("Set DNS", isOn: $profile.setDns)
-                    Toggle("Half-internet routes", isOn: $profile.halfInternetRoutes)
-                    Toggle("pppd use peer DNS", isOn: $profile.pppdUsePeerdns)
-                    TextField(L("CA file（選填）"), text: optionalBinding(\.caFile))
-                    TextField(L("User cert（選填）"), text: optionalBinding(\.userCert))
-                    TextField(L("User key（選填）"), text: optionalBinding(\.userKey))
-                } label: {
-                    Text(L("進階選項"))
-                        .contentShape(Rectangle())
-                        .onTapGesture { advancedExpanded.toggle() }
-                }
+                            // "進階選項" and "刪除此設定檔" live as rows in this
+                            // same grid (not a separate box) so their label and
+                            // vertical spacing line up exactly like every field
+                            // above — both the label text AND the chevron toggle
+                            // expansion, so there's no tiny hard-to-hit hitbox.
+                            GridRow {
+                                Text(L("進階選項"))
+                                    .foregroundStyle(.secondary)
+                                    .contentShape(Rectangle())
+                                    .onTapGesture { withAnimation { advancedExpanded.toggle() } }
+                                Image(systemName: advancedExpanded ? "chevron.down" : "chevron.right")
+                                    .foregroundStyle(.secondary)
+                                    .contentShape(Rectangle())
+                                    .onTapGesture { withAnimation { advancedExpanded.toggle() } }
+                            }
 
-                if !isNew {
-                    Section {
-                        Button(L("刪除此設定檔"), role: .destructive) {
-                            showDeleteConfirm = true
+                            if advancedExpanded {
+                                gridRow(L("斷線時自動重新連線")) { Toggle("", isOn: $profile.autoReconnect).labelsHidden() }
+                                gridRow("Set routes") { Toggle("", isOn: $profile.setRoutes).labelsHidden() }
+                                gridRow("Set DNS") { Toggle("", isOn: $profile.setDns).labelsHidden() }
+                                gridRow("Half-internet routes") { Toggle("", isOn: $profile.halfInternetRoutes).labelsHidden() }
+                                gridRow("pppd use peer DNS") { Toggle("", isOn: $profile.pppdUsePeerdns).labelsHidden() }
+                                gridRow(L("CA file（選填）")) { TextField("", text: optionalBinding(\.caFile)) }
+                                gridRow(L("User cert（選填）")) { TextField("", text: optionalBinding(\.userCert)) }
+                                gridRow(L("User key（選填）")) { TextField("", text: optionalBinding(\.userKey)) }
+                            }
+
+                            if !isNew {
+                                gridRow(L("刪除此設定檔")) {
+                                    Button(L("刪除"), role: .destructive) {
+                                        showDeleteConfirm = true
+                                    }
+                                }
+                            }
                         }
                     }
-                }
 
-                if let errorMessage {
-                    Text(errorMessage)
-                        .foregroundStyle(.red)
-                        .textSelection(.enabled)
+                    if let errorMessage {
+                        Text(errorMessage)
+                            .foregroundStyle(.red)
+                            .textSelection(.enabled)
+                    }
                 }
+                .padding(20)
             }
-            .formStyle(.grouped)
 
             Divider()
 
@@ -78,7 +99,7 @@ struct ProfileEditorView: View {
             }
             .padding()
         }
-        .frame(width: 460, height: 540)
+        .frame(width: 480, height: 560)
         .onAppear { refreshPasswordState() }
         .confirmationDialog(
             String(format: L("確定要刪除「%@」嗎？"), profile.name),
@@ -87,6 +108,28 @@ struct ProfileEditorView: View {
         ) {
             Button(L("刪除"), role: .destructive) { delete() }
             Button(L("取消"), role: .cancel) {}
+        }
+    }
+
+    /// Every field lives in a two-column Grid (description leading, input
+    /// leading in its own column right after) instead of Form's default
+    /// macOS row style, which right-aligns values — this keeps every input
+    /// box starting from the same indented left edge instead.
+    @ViewBuilder
+    private func sectionBox<Content: View>(@ViewBuilder content: () -> Content) -> some View {
+        content()
+            .padding(16)
+            .background(Color(nsColor: .controlBackgroundColor), in: RoundedRectangle(cornerRadius: 10))
+    }
+
+    private func gridRow<Content: View>(_ label: String, @ViewBuilder content: () -> Content) -> some View {
+        GridRow {
+            Text(label)
+                .foregroundStyle(.secondary)
+                .gridColumnAlignment(.leading)
+            content()
+                .textFieldStyle(.roundedBorder)
+                .gridColumnAlignment(.leading)
         }
     }
 

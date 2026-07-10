@@ -2,7 +2,6 @@
 "Gateway 使用尚未信任的憑證。若確認信任，把下面這組指紋貼到設定檔的 Trusted cert 欄位。" = "Gateway 使用尚未信任的憑證。若確認信任，把下面這組指紋貼到設定檔的 Trusted cert 欄位。";
 "Grant Access" = "Grant Access";
 "Password" = "Password";
-"Password（已儲存，留空則不變更）" = "Password（已儲存，留空則不變更）";
 "Trusted cert（選填）" = "Trusted cert（選填）";
 "User cert（選填）" = "User cert（選填）";
 "User key（選填）" = "User key（選填）";
@@ -14,6 +13,7 @@
 "取消連線" = "取消連線";
 "尚未設定任何連線。" = "尚未設定任何連線。";
 "已複製" = "已複製";
+"已儲存，留空則不變更" = "已儲存，留空則不變更";
 "已連線" = "已連線";
 "從 FortiClient 匯入" = "從 FortiClient 匯入";
 "新增連線" = "新增連線";

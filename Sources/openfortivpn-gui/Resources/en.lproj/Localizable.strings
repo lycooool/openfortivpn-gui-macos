@@ -2,7 +2,6 @@
 "Gateway 使用尚未信任的憑證。若確認信任，把下面這組指紋貼到設定檔的 Trusted cert 欄位。" = "The gateway is using an untrusted certificate. If you trust it, paste the fingerprint below into this profile's Trusted cert field.";
 "Grant Access" = "Grant Access";
 "Password" = "Password";
-"Password（已儲存，留空則不變更）" = "Password (saved — leave blank to keep)";
 "Trusted cert（選填）" = "Trusted cert (optional)";
 "User cert（選填）" = "User cert (optional)";
 "User key（選填）" = "User key (optional)";
@@ -14,6 +13,7 @@
 "取消連線" = "Cancel Connecting";
 "尚未設定任何連線。" = "No connections configured yet.";
 "已複製" = "Copied";
+"已儲存，留空則不變更" = "Saved — leave blank to keep";
 "已連線" = "Connected";
 "從 FortiClient 匯入" = "Import from FortiClient";
 "新增連線" = "Add Connection";
